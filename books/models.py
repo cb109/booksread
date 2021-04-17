@@ -2,27 +2,35 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class User(AbstractUser):
+class BaseModel(models.Model):
+    class Meta:
+        abstract = True
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+
+class User(BaseModel, AbstractUser):
     owned_books = models.ManyToManyField(
         "books.Book", related_name="owners", through="books.OwnedBook"
     )
 
 
-class Author(models.Model):
+class Author(BaseModel):
     full_name = models.CharField(max_length=128)
 
     def __str__(self):
         return self.full_name
 
 
-class Publisher(models.Model):
+class Publisher(BaseModel):
     name = models.CharField(max_length=128)
 
     def __str__(self):
         return self.name
 
 
-class Book(models.Model):
+class Book(BaseModel):
     title = models.CharField(max_length=128)
     isbn = models.CharField(
         unique=True, blank=True, null=True, default=None, max_length=32,
@@ -43,7 +51,7 @@ class Book(models.Model):
         return f"{self.title} {self.isbn or ''}"
 
 
-class OwnedBook(models.Model):
+class OwnedBook(BaseModel):
     user = models.ForeignKey("books.User", on_delete=models.CASCADE)
     book = models.ForeignKey("books.Book", on_delete=models.CASCADE)
 
