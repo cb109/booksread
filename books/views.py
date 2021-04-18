@@ -4,6 +4,7 @@ import requests
 from django.conf import settings
 from django.db import transaction
 from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
 
 from .models import Author, Book, Publisher
 
@@ -57,7 +58,10 @@ def get_or_create_book(
         authors.append(author.id)
 
     book, created = Book.objects.get_or_create(
-        description=description, isbn=isbn, publisher=publisher, title=title,
+        description=description,
+        isbn=isbn,
+        publisher=publisher,
+        title=title,
     )
     if not created and book.authors != authors:
         book.id = None
@@ -67,3 +71,8 @@ def get_or_create_book(
         book.authors.set(authors)
 
     return book
+
+
+@require_http_methods(("GET",))
+def home(request):
+    return render(request, "base.html")
