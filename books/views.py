@@ -2,6 +2,8 @@ from typing import List, Optional
 
 import requests
 from django.conf import settings
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
@@ -73,6 +75,9 @@ def get_or_create_book(
     return book
 
 
-@require_http_methods(("GET",))
-def home(request):
-    return render(request, "base.html")
+class LoginView(auth_views.LoginView):
+    template_name = "login.html"
+
+
+class LogoutView(auth_views.LogoutView):
+    template_name = "logout.html"

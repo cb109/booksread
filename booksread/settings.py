@@ -132,3 +132,6 @@ AUTH_USER_MODEL = "books.User"
 
 GOOGLE_BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/volumes"
 GOOGLE_BOOKS_LANGUAGE_RESTRICT = "de"
+
+LOGIN_REDIRECT_URL = "books"
+LOGOUT_REDIRECT_URL = "login"
