@@ -33,7 +33,11 @@ class Publisher(BaseModel):
 class Book(BaseModel):
     title = models.CharField(max_length=128)
     isbn = models.CharField(
-        unique=True, blank=True, null=True, default=None, max_length=32,
+        unique=True,
+        blank=True,
+        null=True,
+        default=None,
+        max_length=32,
     )
     authors = models.ManyToManyField("books.Author", related_name="books")
     publisher = models.ForeignKey(
@@ -46,6 +50,8 @@ class Book(BaseModel):
     )
     description = models.TextField(default="")
     num_pages = models.IntegerField(default=0)
+    thumbnail_url = models.URLField(default=None, blank=True, null=True)
+    info_url = models.URLField(default=None, blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} {self.isbn or ''}"

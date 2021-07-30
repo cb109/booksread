@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
+from django.views.generic import ListView
 
 from .models import Author, Book, Publisher
 
@@ -48,7 +49,6 @@ def get_or_create_book(
     author_names: List[str],
     isbn: Optional[str] = None,
     publisher_name: Optional[str] = None,
-    description: Optional[str] = "",
 ):
     publisher = None
     if publisher_name:
@@ -57,17 +57,21 @@ def get_or_create_book(
     authors = []
     for author_name in author_names:
         author, _ = Author.objects.get_or_create(full_name=author_name)
-        authors.append(author.id)
+        authors.append(author)
 
-    book, created = Book.objects.get_or_create(
-        description=description,
-        isbn=isbn,
-        publisher=publisher,
-        title=title,
-    )
-    if not created and book.authors != authors:
-        book.id = None
-        book.save()
+    if isbn:
+        book, created = Book.objects.get_or_create(
+            isbn=isbn,
+        )
+        if created:
+            book.publisher = publisher
+            book.title = title
+            book.save()
+    else:
+        book, created = Book.objects.get_or_create(
+            publisher=publisher,
+            title=title,
+        )
 
     if authors:
         book.authors.set(authors)
@@ -81,3 +85,65 @@ class LoginView(auth_views.LoginView):
 
 class LogoutView(auth_views.LogoutView):
     template_name = "logout.html"
+
+
+class SearchGoogleBooks(ListView):
+    model = Book
+    template_name = "search-list.html"
+
+    def get_queryset(self):
+        isbn = self.request.GET.get("isbn", None)
+        title = self.request.GET.get("title", None)
+        author = self.request.GET.get("author", None)
+
+        if isbn:
+            google_books_data = search_google_books(isbn=isbn)
+        else:
+            google_books_data = search_google_books(title=title, author=author)
+
+        book_ids = []
+        volumes = google_books_data.get("items")
+        if not volumes:
+            return Book.objects.none()
+
+        for volume in volumes:
+            book = get_or_create_book(
+                title=volume["volumeInfo"]["title"],
+                author_names=volume["volumeInfo"]["authors"],
+                isbn=_get_isbn_from_volume(volume),
+            )
+
+            search_info = volume.get("searchInfo")
+            if search_info:
+                description = search_info.get("textSnippet", "")
+                if description:
+                    book.description = description
+                    book.save(update_fields=["description"])
+
+            num_pages = volume["volumeInfo"].get("pageCount", 0)
+            if num_pages:
+                book.num_pages = num_pages
+                book.save(update_fields=["num_pages"])
+
+            image_links = volume["volumeInfo"].get("imageLinks")
+            if image_links:
+                book.thumbnail_url = image_links.get(
+                    "thumbnail", image_links.get("smallThumbnail")
+                )
+                book.save(update_fields=["thumbnail_url"])
+
+            book.info_url = volume["volumeInfo"]["infoLink"]
+            book.save(update_fields=["info_url"])
+
+            book_ids.append(book.id)
+
+        return Book.objects.filter(id__in=book_ids)
+
+
+def _get_isbn_from_volume(volume):
+    """Prefer ISBN_13 over ISBN_10."""
+    identifier_objs = volume["volumeInfo"]["industryIdentifiers"]
+    for identifier_obj in identifier_objs:
+        if identifier_obj["type"] == "ISBN_13":
+            return identifier_obj["identifier"]
+    return identifier_objs[0]["identifier"] if len(identifier_objs) else None

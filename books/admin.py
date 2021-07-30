@@ -17,6 +17,7 @@ class BookAdmin(admin.ModelAdmin):
         "title",
         "author_names",
         "publisher",
+        "num_pages",
         "created_at",
         "id",
     )

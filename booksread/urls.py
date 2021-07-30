@@ -30,4 +30,14 @@ urlpatterns = [
         books_views.LogoutView.as_view(),
         name="logout",
     ),
+    path(
+        "search",
+        books_views.SearchGoogleBooks.as_view(),
+        name="search-google-books",
+    ),
+    path(
+        "",
+        books_views.LoginView.as_view(),
+        name="fallback",
+    ),
 ]
