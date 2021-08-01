@@ -36,6 +36,11 @@ urlpatterns = [
         name="ownedbook-list",
     ),
     path(
+        "books/add",
+        books_views.add_owned_book,
+        name="ownedbook-add",
+    ),
+    path(
         "search",
         books_views.Search.as_view(),
         name="search",

@@ -3,8 +3,11 @@ from typing import List, Optional
 import requests
 from django.conf import settings
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.shortcuts import redirect
+from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView
 
@@ -92,6 +95,15 @@ class OwnedBookList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         """Return only Books owned by current User."""
         return super().get_queryset().filter(user=self.request.user)
+
+
+@login_required
+@require_http_methods(("POST",))
+def add_owned_book(request):
+    book_id = request.POST["book_id"]
+    book = Book.objects.get(id=book_id)
+    request.user.owned_books.add(book)
+    return redirect("ownedbook-list")
 
 
 class Search(LoginRequiredMixin, TemplateView):

@@ -4,8 +4,10 @@
 
 <h2>Owned Books</h2>
 
-{% for book in ownedbook_list %}
-  {% include "books/book.html" with book=book only %}
+{% for ownedbook in ownedbook_list %}
+  <div style="margin-bottom: 16px">
+    {% include "books/book.html" with book=ownedbook.book only %}
+  </div>
 {% empty %}
   No owned books yet
 {% endfor %}

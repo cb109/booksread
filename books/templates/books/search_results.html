@@ -5,7 +5,28 @@
 <h2>Google Books Search Results</h2>
 
 {% for book in matching_books %}
-  {% include "books/book.html" with book=book only %}
+  <div>
+    {% include "books/book.html" with book=book only %}
+
+    {% if book not in request.user.owned_books.all %}
+    <form action="books/add" method="POST">
+      {% csrf_token %}
+      <input
+        type="number"
+        name="book_id"
+        value="{{ book.id }}"
+        hidden
+      >
+      <button
+        type="submit"
+        style="margin-top: 8px"
+      >
+        Add to owned Books
+      </button>
+    </form>
+    {% endif %}
+  </div>
+  {% if not forloop.last %}<hr>{% endif %}
 {% empty %}
   No matches
 {% endfor %}
