@@ -1,0 +1,20 @@
+<div>
+  <a
+    href="{{ book.info_url }}"
+    target="_blank"
+  >{{ book.title }}</a>{% if book.authors.exists %}{% for author in book.authors.all %}{% if book.authors.count == 1 or not forloop.last %}, {% endif %}{{ author.full_name }}{% endfor %}{% endif %}
+  <br>
+  {% if book.description %}
+  <div style="margin-top: 8px"><small>{{ book.description }}</small></div>
+  {% endif %}
+  {% if book.thumbnail_url %}
+  <img
+    src="{{ book.thumbnail_url }}"
+    style="
+      margin-top: 8px;
+      max-width: 400px;
+      max-height: 200px;
+    "
+  >
+  {% endif %}
+</div>

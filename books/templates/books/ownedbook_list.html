@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Owned Books</h2>
+
+{% for book in ownedbook_list %}
+  {% include "books/book.html" with book=book only %}
+{% empty %}
+  No owned books yet
+{% endfor %}
+
+{% endblock content %}

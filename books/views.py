@@ -3,13 +3,12 @@ from typing import List, Optional
 import requests
 from django.conf import settings
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import render
-from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
+from django.views.generic.base import TemplateView
 
-from .models import Author, Book, Publisher
+from .models import Author, Book, OwnedBook, Publisher
 
 
 def search_google_books(
@@ -83,13 +82,26 @@ class LoginView(auth_views.LoginView):
     template_name = "login.html"
 
 
-class LogoutView(auth_views.LogoutView):
+class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
     template_name = "logout.html"
 
 
-class SearchGoogleBooks(ListView):
+class OwnedBookList(LoginRequiredMixin, ListView):
+    model = OwnedBook
+
+    def get_queryset(self):
+        """Return only Books owned by current User."""
+        return super().get_queryset().filter(user=self.request.user)
+
+
+class Search(LoginRequiredMixin, TemplateView):
+    template_name = "books/search.html"
+
+
+class SearchResults(LoginRequiredMixin, ListView):
     model = Book
-    template_name = "search-list.html"
+    template_name = "books/search_results.html"
+    context_object_name = "matching_books"
 
     def get_queryset(self):
         isbn = self.request.GET.get("isbn", None)
@@ -97,7 +109,8 @@ class SearchGoogleBooks(ListView):
         author = self.request.GET.get("author", None)
 
         if isbn:
-            google_books_data = search_google_books(isbn=isbn)
+            normalized_isbn = _normalize_isbn(isbn)
+            google_books_data = search_google_books(isbn=normalized_isbn)
         else:
             google_books_data = search_google_books(title=title, author=author)
 
@@ -138,6 +151,10 @@ class SearchGoogleBooks(ListView):
             book_ids.append(book.id)
 
         return Book.objects.filter(id__in=book_ids)
+
+
+def _normalize_isbn(isbn):
+    return str(isbn).replace(" ", "").replace("-", "").replace("_", "").replace(".", "")
 
 
 def _get_isbn_from_volume(volume):

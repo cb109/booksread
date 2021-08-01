@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Google Books Search Results</h2>
+
+{% for book in matching_books %}
+  {% include "books/book.html" with book=book only %}
+{% empty %}
+  No matches
+{% endfor %}
+
+{% endblock content %}

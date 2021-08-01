@@ -31,13 +31,23 @@ urlpatterns = [
         name="logout",
     ),
     path(
+        "books",
+        books_views.OwnedBookList.as_view(),
+        name="ownedbook-list",
+    ),
+    path(
         "search",
-        books_views.SearchGoogleBooks.as_view(),
-        name="search-google-books",
+        books_views.Search.as_view(),
+        name="search",
+    ),
+    path(
+        "search-results",
+        books_views.SearchResults.as_view(),
+        name="search-results",
     ),
     path(
         "",
-        books_views.LoginView.as_view(),
+        books_views.OwnedBookList.as_view(),
         name="fallback",
     ),
 ]

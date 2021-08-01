@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Google Books Search</h2>
+
+<form action="search-results" method="GET">
+  <label>
+    ISBN <input type="text" name="isbn" required>
+  </label>
+  <button type="submit">Search</button>
+</form>
+
+{% endblock content %}
