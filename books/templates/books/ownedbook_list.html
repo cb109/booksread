@@ -5,7 +5,14 @@
 <h2>Owned Books</h2>
 
 {% for ownedbook in ownedbook_list %}
-  <div style="margin-bottom: 16px">
+  <div
+    style="
+      margin-bottom: 16px;
+      padding: 16px;
+      max-width: 400px;
+      outline: 1px solid rgba(0, 0, 0, 0.08);
+    "
+  >
     {% include "books/book.html" with book=ownedbook.book only %}
 
     <div style="margin-top: 8px">
