@@ -4,6 +4,10 @@
     target="_blank"
   >{{ book.title }}</a>{% if book.authors.exists %}{% for author in book.authors.all %}, {{ author.full_name }}{% endfor %}{% endif %}
   <br>
+  {% if book.publisher %}
+  <br>
+  {{ book.publisher.name }}
+  {% endif %}
   {% if book.description %}
   <div style="margin-top: 8px"><small>{{ book.description }}</small></div>
   {% endif %}

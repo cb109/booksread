@@ -131,6 +131,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "books.User"
 
 GOOGLE_BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/volumes"
+GOOGLE_BOOKS_MAX_RESULTS = 10
 GOOGLE_BOOKS_LANGUAGE_RESTRICT = None  # E.g. 'de', 'en'.
 
 LOGIN_URL = "login"

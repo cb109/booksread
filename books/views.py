@@ -18,7 +18,7 @@ def search_google_books(
     isbn: Optional[str] = None,
     title: Optional[str] = None,
     author: Optional[str] = None,
-    max_results: Optional[int] = 5,
+    max_results: Optional[int] = settings.GOOGLE_BOOKS_MAX_RESULTS,
     language: Optional[str] = settings.GOOGLE_BOOKS_LANGUAGE_RESTRICT,
 ) -> dict:
     if not any([isbn, title, author]):
@@ -176,7 +176,8 @@ class SearchResults(LoginRequiredMixin, ListView):
         for volume in volumes:
             book = get_or_create_book(
                 title=volume["volumeInfo"]["title"],
-                author_names=volume["volumeInfo"]["authors"],
+                author_names=volume["volumeInfo"].get("authors", []),
+                publisher_name=volume["volumeInfo"].get("publisher"),
                 isbn=_get_isbn_from_volume(volume),
             )
 
@@ -204,7 +205,8 @@ class SearchResults(LoginRequiredMixin, ListView):
 
             book_ids.append(book.id)
 
-        return Book.objects.filter(id__in=book_ids)
+        matching_books = Book.objects.filter(id__in=book_ids)
+        return matching_books
 
 
 def _normalize_isbn(isbn):
