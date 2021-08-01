@@ -41,6 +41,11 @@ urlpatterns = [
         name="ownedbook-add",
     ),
     path(
+        "books/remove",
+        books_views.remove_owned_book,
+        name="ownedbook-remove",
+    ),
+    path(
         "search",
         books_views.Search.as_view(),
         name="search",

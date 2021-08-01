@@ -7,6 +7,23 @@
 {% for ownedbook in ownedbook_list %}
   <div style="margin-bottom: 16px">
     {% include "books/book.html" with book=ownedbook.book only %}
+
+    <form action="books/remove" method="POST">
+      {% csrf_token %}
+      <input
+        type="number"
+        name="book_id"
+        value="{{ ownedbook.book.id }}"
+        hidden
+      >
+      <button
+        type="submit"
+        style="margin-top: 8px"
+      >
+        Remove from owned Books
+      </button>
+    </form>
+
   </div>
 {% empty %}
   No owned books yet

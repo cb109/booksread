@@ -106,6 +106,15 @@ def add_owned_book(request):
     return redirect("ownedbook-list")
 
 
+@login_required
+@require_http_methods(("POST",))
+def remove_owned_book(request):
+    book_id = request.POST["book_id"]
+    book = Book.objects.get(id=book_id)
+    request.user.owned_books.remove(book)
+    return redirect("ownedbook-list")
+
+
 class Search(LoginRequiredMixin, TemplateView):
     template_name = "books/search.html"
 
