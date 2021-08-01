@@ -45,6 +45,8 @@ class OwnedBookAdmin(admin.ModelAdmin):
         "user",
         "book",
         "read",
+        "rating",
+        "review",
         "created_at",
         "id",
     )

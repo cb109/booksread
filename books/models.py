@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models.fields import BooleanField
 
 
 class BaseModel(models.Model):
@@ -61,7 +61,15 @@ class Book(BaseModel):
 class OwnedBook(BaseModel):
     user = models.ForeignKey("books.User", on_delete=models.CASCADE)
     book = models.ForeignKey("books.Book", on_delete=models.CASCADE)
+
     read = models.BooleanField(default=False)
+    """Whether User has read the book in full yet."""
+
+    review = models.TextField(default="", blank=True)
+    """Comments/notes about User's impression of the book."""
+
+    rating = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(9)])
+    """User's rating between 0-9."""
 
     def __str__(self):
         return f"{self.user} -> {self.book} {'[x]' if self.read else '[ ]'}"
