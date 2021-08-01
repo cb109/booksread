@@ -115,6 +115,17 @@ def remove_owned_book(request):
     return redirect("ownedbook-list")
 
 
+@login_required
+@require_http_methods(("POST",))
+def toggle_read(request):
+    book_id = request.POST["book_id"]
+    ownedbook = OwnedBook.objects.get(user=request.user, book_id=book_id)
+    print("ownedbook.read", ownedbook.read)
+    ownedbook.read = not ownedbook.read
+    ownedbook.save(update_fields=["read"])
+    return redirect("ownedbook-list")
+
+
 class Search(LoginRequiredMixin, TemplateView):
     template_name = "books/search.html"
 

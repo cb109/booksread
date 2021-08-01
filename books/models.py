@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.fields import BooleanField
 
 
 class BaseModel(models.Model):
@@ -60,6 +61,7 @@ class Book(BaseModel):
 class OwnedBook(BaseModel):
     user = models.ForeignKey("books.User", on_delete=models.CASCADE)
     book = models.ForeignKey("books.Book", on_delete=models.CASCADE)
+    read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user} -> {self.book}"
+        return f"{self.user} -> {self.book} {'[x]' if self.read else '[ ]'}"

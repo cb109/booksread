@@ -46,6 +46,11 @@ urlpatterns = [
         name="ownedbook-remove",
     ),
     path(
+        "books/toggleread",
+        books_views.toggle_read,
+        name="ownedbook-toggleread",
+    ),
+    path(
         "search",
         books_views.Search.as_view(),
         name="search",
