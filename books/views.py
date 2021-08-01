@@ -113,21 +113,38 @@ def add_owned_book(request):
 
 @login_required
 @require_http_methods(("POST",))
-def remove_owned_book(request):
-    book_id = request.POST["book_id"]
-    book = Book.objects.get(id=book_id)
-    request.user.owned_books.remove(book)
+def remove_owned_book(request, ownedbook_id):
+    ownedbook = OwnedBook.objects.get(id=ownedbook_id, user=request.user)
+    ownedbook.delete()
     return redirect("ownedbook-list")
 
 
 @login_required
 @require_http_methods(("POST",))
-def toggle_read(request):
-    book_id = request.POST["book_id"]
-    ownedbook = OwnedBook.objects.get(user=request.user, book_id=book_id)
-    print("ownedbook.read", ownedbook.read)
+def toggle_read(request, ownedbook_id):
+    ownedbook = OwnedBook.objects.get(id=ownedbook_id, user=request.user)
     ownedbook.read = not ownedbook.read
     ownedbook.save(update_fields=["read"])
+    return redirect("ownedbook-list")
+
+
+@login_required
+@require_http_methods(("POST",))
+def set_rating(request, ownedbook_id):
+    rating = request.POST["rating"]
+    ownedbook = OwnedBook.objects.get(id=ownedbook_id, user=request.user)
+    ownedbook.rating = rating
+    ownedbook.save(update_fields=["rating"])
+    return redirect("ownedbook-list")
+
+
+@login_required
+@require_http_methods(("POST",))
+def set_review(request, ownedbook_id):
+    review = request.POST["review"]
+    ownedbook = OwnedBook.objects.get(id=ownedbook_id, user=request.user)
+    ownedbook.review = review
+    ownedbook.save(update_fields=["review"])
     return redirect("ownedbook-list")
 
 

@@ -41,12 +41,22 @@ urlpatterns = [
         name="ownedbook-add",
     ),
     path(
-        "books/remove",
+        "books/<int:ownedbook_id>/remove",
         books_views.remove_owned_book,
         name="ownedbook-remove",
     ),
     path(
-        "books/toggleread",
+        "books/<int:ownedbook_id>/rate",
+        books_views.set_rating,
+        name="ownedbook-rate",
+    ),
+    path(
+        "books/<int:ownedbook_id>/review",
+        books_views.set_review,
+        name="ownedbook-review",
+    ),
+    path(
+        "books/<int:ownedbook_id>/toggleread",
         books_views.toggle_read,
         name="ownedbook-toggleread",
     ),
