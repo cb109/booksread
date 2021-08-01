@@ -94,7 +94,12 @@ class OwnedBookList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """Return only Books owned by current User."""
-        return super().get_queryset().filter(user=self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user)
+            .order_by("book__title")
+        )
 
 
 @login_required
