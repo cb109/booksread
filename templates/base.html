@@ -9,12 +9,14 @@
   <body>
     {% block navbar %}
     {% if request.user.is_authenticated %}
-      <a href="books">Books</a>
-      <a href="search">Search</a>
-      <a href="logout">Logout ({{ request.user }})</a>
+    <a href="search">Search</a>
+    <a href="books">Books</a>
+    <a href="logout">Logout ({{ request.user }})</a>
     {% endif %}
     {% endblock %}
+
     {% block content %}{% endblock %}
+
     <script src="https://unpkg.com/htmx.org@1.1.0"></script>
     <script>
       document.body.addEventListener('htmx:configRequest', (event) => {
