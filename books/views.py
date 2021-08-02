@@ -7,9 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
-from django.views.generic.base import TemplateView
+from django.views.generic.edit import UpdateView
 
 from .models import Author, Book, OwnedBook, Publisher
 
@@ -100,6 +101,12 @@ class OwnedBookList(LoginRequiredMixin, ListView):
             .filter(user=self.request.user)
             .order_by("book__title")
         )
+
+
+class OwnedBookEdit(LoginRequiredMixin, UpdateView):
+    model = OwnedBook
+    fields = ["read", "rating", "review"]
+    success_url = "/books"
 
 
 @login_required

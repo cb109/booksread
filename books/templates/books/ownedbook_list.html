@@ -15,67 +15,12 @@
   >
     {% include "books/book.html" with book=ownedbook.book only %}
 
-    <!-- Toggle read/unread -->
-    <div style="margin-top: 8px">
-      {% if ownedbook.read %}
-      <span style="color: limegreen">Read</span>
-      {% else %}
-      <span style="color: darkred">Unread</span>
-      {% endif %}
-      <form action="books/{{ ownedbook.id }}/toggleread" method="POST">
-        {% csrf_token %}
-        <button type="submit">
-          Toggle
-        </button>
-      </form>
-    </div>
-
-    {% if ownedbook.read %}
-
-    <!--Set Rating -->
-    <form action="books/{{ ownedbook.id }}/rate" method="POST">
-      {% csrf_token %}
-      <input
-        type="number"
-        name="rating"
-        min="0"
-        max="9"
-        step="1"
-        value="{{ ownedbook.rating }}"
-      >
-      <button
-        type="submit"
-        style="margin-top: 8px"
-      >
-        Rate
-      </button>
-    </form>
-
-    <!--Update Review -->
-    <form action="books/{{ ownedbook.id }}/review" method="POST">
-      {% csrf_token %}
-      <textarea name="review">{{ ownedbook.review }}</textarea>
-      <button
-        type="submit"
-        style="margin-top: 8px"
-      >
-        Confirm Review
-      </button>
-    </form>
-
-    {% endif %}
-
-    <!--Remove from owned books -->
-    <form action="books/{{ ownedbook.id }}/remove" method="POST">
-      {% csrf_token %}
-      <button
-        type="submit"
-        style="margin-top: 8px"
-      >
-        Remove from owned Books
-      </button>
-    </form>
-
+    <a
+      href="books/{{ ownedbook.id }}"
+      style="display: block; margin-top: 8px"
+    >
+      Edit
+    </a>
   </div>
 {% empty %}
   No owned books yet
