@@ -66,11 +66,6 @@ urlpatterns = [
         name="search",
     ),
     path(
-        "search-results",
-        books_views.SearchResults.as_view(),
-        name="search-results",
-    ),
-    path(
         "",
         books_views.OwnedBookList.as_view(),
         name="fallback",

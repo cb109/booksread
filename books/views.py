@@ -148,19 +148,18 @@ def set_review(request, ownedbook_id):
     return redirect("ownedbook-list")
 
 
-class Search(LoginRequiredMixin, TemplateView):
-    template_name = "books/search.html"
-
-
-class SearchResults(LoginRequiredMixin, ListView):
+class Search(LoginRequiredMixin, ListView):
     model = Book
-    template_name = "books/search_results.html"
+    template_name = "books/search.html"
     context_object_name = "matching_books"
 
     def get_queryset(self):
         isbn = self.request.GET.get("isbn", None)
         title = self.request.GET.get("title", None)
         author = self.request.GET.get("author", None)
+
+        if not any([isbn, title, author]):
+            return Book.objects.none()
 
         if isbn:
             normalized_isbn = _normalize_isbn(isbn)

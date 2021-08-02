@@ -4,14 +4,15 @@
 
 <h2>Google Books Search</h2>
 
-<form action="search-results" method="GET">
+<!-- Search -->
+<form method="GET">
   <label>
     ISBN <input type="text" name="isbn" required>
   </label>
   <button type="submit">Search</button>
 </form>
 
-<form action="search-results" method="GET">
+<form method="GET">
   <label>
     Title <input type="text" name="title" required>
   </label>
@@ -20,5 +21,36 @@
   </label>
   <button type="submit">Search</button>
 </form>
+
+<!-- Results -->
+{% for book in matching_books %}
+  <div>
+    {% include "books/book.html" with book=book only %}
+
+    {% if book not in request.user.owned_books.all %}
+    <form action="books/add" method="POST">
+      {% csrf_token %}
+      <input
+        type="number"
+        name="book_id"
+        value="{{ book.id }}"
+        hidden
+      >
+      <button
+        type="submit"
+        style="margin-top: 8px"
+      >
+        Add to owned Books
+      </button>
+    </form>
+    {% else %}
+    Already in owned Books
+    {% endif %}
+
+  </div>
+  {% if not forloop.last %}<hr>{% endif %}
+{% empty %}
+  No matches
+{% endfor %}
 
 {% endblock content %}
