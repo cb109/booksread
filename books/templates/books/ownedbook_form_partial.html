@@ -1,0 +1,35 @@
+<form id="ownedbook-form">
+  {% csrf_token %}
+
+  {{ form.as_p }}
+
+  <button
+    type="button"
+    hx-post="{% url "ownedbook-edit" ownedbook.id %}"
+    hx-target="#ownedbook-form"
+    hx-swap="outerHTML"
+  >
+    Update
+  </button>
+
+  {% if request.htmx %}
+  <span class="saved fadeout">✓</span>
+  {% endif %}
+</form>
+
+<style>
+@keyframes fadeOut {
+  25% { opacity: 1;}
+  100% { opacity: 0;}
+}
+
+.saved {
+  color: limegreen;
+  font-weight: bold;
+}
+
+.fadeout{
+  animation: fadeOut 1.5s;
+  animation-fill-mode: forwards;
+}
+</style>

@@ -5,11 +5,6 @@
 <h2>Edit {{ ownedbook.book.title }}</h2>
 
 {% include "books/book.html" with book=ownedbook.book only %}
-
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Update</button>
-</form>
+{% include "books/ownedbook_form_partial.html" with form=form ownedbook=ownedbook only %}
 
 {% endblock content %}

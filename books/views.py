@@ -106,7 +106,15 @@ class OwnedBookList(LoginRequiredMixin, ListView):
 class OwnedBookEdit(LoginRequiredMixin, UpdateView):
     model = OwnedBook
     fields = ["read", "rating", "review"]
-    success_url = "/books"
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return "books/ownedbook_form_partial.html"
+
+        return "books/ownedbook_form.html"
+
+    def get_success_url(self):
+        return reverse("ownedbook-edit", args=(self.object.id,))
 
 
 @login_required
