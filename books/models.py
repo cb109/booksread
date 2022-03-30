@@ -1,6 +1,10 @@
+from typing import Optional, Tuple
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator
 from django.db import models
+from PIL import ImageFile
+import requests
 
 
 class BaseModel(models.Model):
@@ -52,10 +56,21 @@ class Book(BaseModel):
     description = models.TextField(default="")
     num_pages = models.IntegerField(default=0)
     thumbnail_url = models.URLField(default=None, blank=True, null=True)
+    thumbnail_width = models.PositiveIntegerField(default=0)
+    thumbnail_height = models.PositiveIntegerField(default=0)
     info_url = models.URLField(default=None, blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} {self.isbn or ''}"
+
+    def update_thumbnail_dimensions_from_url(self) -> bool:
+        if self.thumbnail_url:
+            thumbnail_dimensions = _get_image_dimensions_from_url(self.thumbnail_url)
+            if thumbnail_dimensions:
+                self.thumbnail_width, self.thumbnail_height = thumbnail_dimensions
+                self.save(update_fields=["thumbnail_width", "thumbnail_height"])
+                return True
+        return False
 
 
 class OwnedBook(BaseModel):
@@ -73,3 +88,14 @@ class OwnedBook(BaseModel):
 
     def __str__(self):
         return f"{self.user} -> {self.book} {'[x]' if self.read else '[ ]'}"
+
+
+def _get_image_dimensions_from_url(image_url: str) -> Optional[Tuple[int, int]]:
+    # https://stackoverflow.com/a/70514550
+    resume_header = {"Range": "bytes=0-2000000"}
+    data = requests.get(image_url, stream=True, headers=resume_header).content
+    parser = ImageFile.Parser()
+    parser.feed(data)
+    if parser.image:
+        return parser.image.size
+    return None

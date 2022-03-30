@@ -213,6 +213,7 @@ class Search(LoginRequiredMixin, ListView):
                     "thumbnail", image_links.get("smallThumbnail")
                 )
                 book.save(update_fields=["thumbnail_url"])
+                book.update_thumbnail_dimensions_from_url()
 
             book.info_url = volume["volumeInfo"]["infoLink"]
             book.save(update_fields=["info_url"])
