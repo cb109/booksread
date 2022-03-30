@@ -4,26 +4,42 @@
 
 <h2>Owned Books</h2>
 
-{% for ownedbook in ownedbook_list %}
-  <div
-    style="
-      margin-bottom: 16px;
-      padding: 16px;
-      max-width: 400px;
-      outline: 1px solid rgba(0, 0, 0, 0.08);
-    "
-  >
-    {% include "books/book.html" with book=ownedbook.book only %}
-
-    <a
-      href="books/{{ ownedbook.id }}"
-      style="display: block; margin-top: 8px"
+<div class="books-grid">
+  {% for ownedbook in ownedbook_list %}
+    <div
+      class="book-grid-item"
+      style="
+        margin-bottom: 16px;
+        padding: 16px;
+        max-width: 400px;
+        outline: 1px solid rgba(0, 0, 0, 0.08);
+      "
     >
-      Edit
-    </a>
-  </div>
-{% empty %}
-  No owned books yet
-{% endfor %}
+      <div>
+        {% include "books/book.html" with book=ownedbook.book ownedbook=ownedbook only %}
+      </div>
+      <a
+        href="books/{{ ownedbook.id }}"
+        style="display: block; margin-top: 8px"
+      >
+        Edit
+      </a>
+    </div>
+  {% empty %}
+    No owned books yet
+  {% endfor %}
+</div>
+
+<style>
+
+.books-grid {
+  display: flex;
+}
+
+.book-grid-item {
+  margin: 0.5em;
+}
+
+</style>
 
 {% endblock content %}
