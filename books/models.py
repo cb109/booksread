@@ -1,4 +1,5 @@
 from typing import Optional, Tuple
+from fractions import Fraction
 
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator
@@ -71,6 +72,23 @@ class Book(BaseModel):
                 self.save(update_fields=["thumbnail_width", "thumbnail_height"])
                 return True
         return False
+
+    @property
+    def thumbnail_ratio(self):
+        try:
+            return self.thumbnail_width / self.thumbnail_height
+        except ZeroDivisionError:
+            return 2 / 3  # Fallback.
+
+    @property
+    def thumbnail_ratio_fraction(self):
+        """Human readable aspect e.g. '16:9' instead of '1.777777'."""
+        ratio = str(Fraction(self.thumbnail_ratio).limit_denominator()).replace(
+            "/", ":"
+        )
+        if ratio == "1":
+            ratio = "1:1"
+        return ratio
 
 
 class OwnedBook(BaseModel):
