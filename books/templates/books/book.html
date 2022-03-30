@@ -1,41 +1,33 @@
 <div>
-  <a
-    href="{{ book.info_url }}"
-    target="_blank"
-  >{{ book.title }}</a>{% if book.authors.exists %}{% for author in book.authors.all %}, {{ author.full_name }}{% endfor %}{% endif %}
-  <br>
-  {% if book.publisher %}
-  <br>
-  {{ book.publisher.name }}
-  {% endif %}
-  {% if book.description %}
-  <div style="margin-top: 8px"><small>{{ book.description }}</small></div>
-  {% endif %}
   {% if book.thumbnail_url %}
-    <a
-    {% if ownedbook %}
-      href="books/{{ ownedbook.id }}"
-      title="Edit"
-    {% endif %}
-    >
-    <a
-      class="book-container"
-      {% if ownedbook %}
-      href="{% url 'ownedbook-edit' ownedbook.id %}"
+  <div class="book-container">
+    <div class="book">
+      <img
+        alt="{{ book.description }}"
+        src="{{ book.thumbnail_url }}"
+      >
+    </div>
+  </div>
+  {% else %}
+  <div class="textual">
+    <span>
+      <strong>{{ book.title }}</strong>{% if book.authors.exists %}{% for author in book.authors.all %},
+        {{ author.full_name }}{% endfor %}
       {% endif %}
-    >
-      <div class="book">
-        <img
-          title="{{ book.description }}"
-          alt="{{ book.description }}"
-          src="{{ book.thumbnail_url }}"
-        >
-      </div>
-    </a>
+    </span>
+    <p>{{ book.description }}</p>
+  </div>
   {% endif %}
 </div>
 
 <style>
+  .textual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+
   .book-container {
   /* --thumbnail-width: 18.5em; */
   /* --thumbnail-ratio: {{ book.thumbnail_ratio }}; */
@@ -43,6 +35,7 @@
     align-items: center;
     justify-content: center;
     perspective: 600px;
+    transform: scale(0.9);
   }
 
   .book {
@@ -50,12 +43,12 @@
     height: 300px;
     position: relative;
     transform-style: preserve-3d;
-    transform: rotateY(-30deg) scale(0.8);
-    transition: 0.5s ease-in-out;
+    transform: rotateY(-30deg);
+    transition: 0.2s ease;
   }
 
   .book:hover {
-    transform: rotateY(0deg) scale(0.8);
+    transform: rotateY(0deg) scale(1.2);
   }
 
   .book > :first-child {

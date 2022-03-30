@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h2>Owned Books</h2>
+{% comment %} <h2>Owned Books</h2> {% endcomment %}
 
 <div class="books-grid">
   {% for ownedbook in ownedbook_list %}
@@ -11,18 +11,14 @@
       style="
         margin-bottom: 16px;
         padding: 16px;
-        max-width: 400px;
-        outline: 1px solid rgba(0, 0, 0, 0.08);
+        max-width: 300px;
       "
     >
-      <div>
-        {% include "books/book.html" with book=ownedbook.book ownedbook=ownedbook only %}
-      </div>
       <a
         href="books/{{ ownedbook.id }}"
-        style="display: block; margin-top: 8px"
+        title="{{ ownedbook.book.title }}{% if ownedbook.book.authors.exists %}{% for author in ownedbook.book.authors.all %}, {{ author.full_name }}{% endfor %}{% endif %}"
       >
-        Edit
+        {% include "books/book.html" with book=ownedbook.book ownedbook=ownedbook only %}
       </a>
     </div>
   {% empty %}
@@ -33,6 +29,7 @@
 <style>
 
 .books-grid {
+  margin: 2em;
   display: flex;
   flex-wrap: wrap;
 }

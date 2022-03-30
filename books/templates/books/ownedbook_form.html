@@ -4,7 +4,15 @@
 
 <h2>Edit {{ ownedbook.book.title }}</h2>
 
-{% include "books/book.html" with book=ownedbook.book only %}
+{% if ownedbook.book.thumbnail_url %}
+  <img
+    alt="{{ ownedbook.book.description }}"
+    src="{{ ownedbook.book.thumbnail_url }}"
+    width="{{ ownedbook.book.thumbnail_width }}"
+    height="auto"
+  >
+{% endif %}
+
 {% include "books/ownedbook_form_partial.html" with form=form ownedbook=ownedbook only %}
 
 {% endblock content %}
