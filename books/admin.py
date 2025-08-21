@@ -44,7 +44,7 @@ class OwnedBookAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "book",
-        "read",
+        "progress",
         "rating",
         "review",
         "created_at",

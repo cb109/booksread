@@ -105,7 +105,7 @@ class OwnedBookList(LoginRequiredMixin, ListView):
 
 class OwnedBookEdit(LoginRequiredMixin, UpdateView):
     model = OwnedBook
-    fields = ["read", "rating", "review"]
+    fields = ["progress", "rating", "review"]
 
     def get_template_names(self):
         if self.request.htmx:

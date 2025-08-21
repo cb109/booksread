@@ -95,8 +95,14 @@ class OwnedBook(BaseModel):
     user = models.ForeignKey("books.User", on_delete=models.CASCADE)
     book = models.ForeignKey("books.Book", on_delete=models.CASCADE)
 
-    read = models.BooleanField(default=False)
-    """Whether User has read the book in full yet."""
+    class ReadStates(models.TextChoices):
+        UNREAD = "unread", "Unread"
+        PARTIALLY_READ = "partially_read", "Partially Read"
+        FULLY_READ = "fully_read", "Fully Read"
+
+    progress = models.CharField(
+        default=ReadStates.UNREAD, choices=ReadStates.choices, max_length=24
+    )
 
     review = models.TextField(default="", blank=True)
     """Comments/notes about User's impression of the book."""
@@ -105,7 +111,7 @@ class OwnedBook(BaseModel):
     """User's rating between 0-9."""
 
     def __str__(self):
-        return f"{self.user} -> {self.book} {'[x]' if self.read else '[ ]'}"
+        return f"{self.user} -> {self.book} {'[x]' if self.progress == self.ReadStates.FULLY_READ else '[ ]'}"
 
 
 def _get_image_dimensions_from_url(image_url: str) -> Optional[Tuple[int, int]]:
